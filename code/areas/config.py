@@ -1,3 +1,33 @@
+def get_requests_from_criteria(criteria):
+    base_url = 'https://www.quintoandar.com.br/api/search?'
+    return [
+        base_url + '&'.join([f'{key}={value}' if key!='start' else f'start={start}' for key, value in criteria['criteria'].items()])
+        for start in [11 * idx for idx in range(10000)]
+    ]
+
+
+false = 'false'
+true = 'true'
+
+
+AREAS_POST = [
+    {
+        'id': 20,
+        'name': 'itaim bibi 10 min',
+        'criteria': {"criteria":{"q":"(and area:[30,1000](and custo:[500,4000](and (or quartos:'1' quartos:'2' quartos:'3' quartos:[4,%7D)for_rent:'true')))","fq":"local:['-23.591080523269657,-46.68532408865451','-23.59789404293819,-46.67737187523619']","return":"id,foto_capa,aluguel,area,quartos,custo,photos,photo_titles,variant_images,variant_images_titles,endereco,regiao_nome,cidade,visit_status,special_conditions,listing_tags,tipo,promotions,for_rent,for_sale,sale_price,condo_iptu,vagas","size":11,"q.parser":"structured","expr.distance":"floor(haversin(-23.594487283103923%2C-46.68134798194535%2Clocal.latitude%2Clocal.longitude)*1000*0.002)","expr.rank":"((-10*distance%2Brelevance_score)*(0.1))","sort":"rank desc","start":0},"business_context":"rent","user_id":"e5a7b163-f719-41fb-bba6-bd7519966f81R","context":{"search_filter":{"price_type":"totalCost","price_min":500,"price_min_changed":false,"price_max":4000,"price_max_changed":true,"area_min":30,"area_min_changed":true,"area_max":1000,"area_max_changed":false},"map":{"bounds_north":-23.591080523269657,"bounds_south":-23.59789404293819,"bounds_east":-46.67737187523619,"bounds_west":-46.68532408865451,"center_lat":-23.594487283103923,"center_lng":-46.68134798194535},"search_dropdown_value":"São Paulo, SP, Brasil","dt":"2019-12-15T03:31:53.748Z"}}
+    },
+    {
+        'id': 21,
+        'name': 'itaim bibi 20 min',
+        'criteria': {"criteria":{"q":"(and area:[30,1000](and custo:[500,3000](and (or quartos:'1' quartos:'2' quartos:'3' quartos:[4,%7D)for_rent:'true')))","fq":"local:['-23.581365728519,-46.69557520578826','-23.63586801022914,-46.63195749844169']","return":"id,foto_capa,aluguel,area,quartos,custo,photos,photo_titles,variant_images,variant_images_titles,endereco,regiao_nome,cidade,visit_status,special_conditions,listing_tags,tipo,promotions,for_rent,for_sale,sale_price,condo_iptu,vagas","size":11,"q.parser":"structured","expr.distance":"floor(haversin(-23.608616869374067%2C-46.663766352114976%2Clocal.latitude%2Clocal.longitude)*1000*0.002)","expr.rank":"((-10*distance%2Brelevance_score)*(0.1))","sort":"rank desc","start":0},"business_context":"rent","user_id":"e5a7b163-f719-41fb-bba6-bd7519966f81R","context":{"search_filter":{"price_type":"totalCost","price_min":500,"price_min_changed":false,"price_max":3000,"price_max_changed":true,"area_min":30,"area_min_changed":true,"area_max":1000,"area_max_changed":false},"map":{"bounds_north":-23.581365728519,"bounds_south":-23.63586801022914,"bounds_east":-46.63195749844169,"bounds_west":-46.69557520578826,"center_lat":-23.608616869374067,"center_lng":-46.663766352114976},"search_dropdown_value":"São Paulo, SP, Brasil","dt":"2019-12-15T03:25:08.535Z"}}
+    },
+    {
+        'id': 22,
+        'name': 'itaim bibi bike 20 min',
+        'criteria': {"criteria":{"q":"(and area:[30,1000](and custo:[500,3000](and (or quartos:'1' quartos:'2' quartos:'3' quartos:[4,%7D)for_rent:'true')))","fq":"local:['-23.581365728519,-46.69557520578826','-23.63586801022914,-46.63195749844169']","return":"id,foto_capa,aluguel,area,quartos,custo,photos,photo_titles,variant_images,variant_images_titles,endereco,regiao_nome,cidade,visit_status,special_conditions,listing_tags,tipo,promotions,for_rent,for_sale,sale_price,condo_iptu,vagas","size":11,"q.parser":"structured","expr.distance":"floor(haversin(-23.608616869374067%2C-46.663766352114976%2Clocal.latitude%2Clocal.longitude)*1000*0.002)","expr.rank":"((-10*distance%2Brelevance_score)*(0.1))","sort":"rank desc","start":0},"business_context":"rent","user_id":"e5a7b163-f719-41fb-bba6-bd7519966f81R","context":{"search_filter":{"price_type":"totalCost","price_min":500,"price_min_changed":false,"price_max":3000,"price_max_changed":true,"area_min":30,"area_min_changed":true,"area_max":1000,"area_max_changed":false},"map":{"bounds_north":-23.581365728519,"bounds_south":-23.63586801022914,"bounds_east":-46.63195749844169,"bounds_west":-46.69557520578826,"center_lat":-23.608616869374067,"center_lng":-46.663766352114976},"search_dropdown_value":"São Paulo, SP, Brasil","dt":"2019-12-15T03:25:08.535Z"}}
+    }
+]
+
 
 AREAS = [
     # {
@@ -177,4 +207,12 @@ AREAS = [
             for start in [11 * idx for idx in range(10000)]
         ]
     },
-]
+    *[
+        {
+            **area,
+            'requests': get_requests_from_criteria(area['criteria'])
+
+        }
+        for area in AREAS_POST
+    ]
+][20:]

@@ -2,7 +2,13 @@ import datetime
 
 import pandas as pd
 
-from handlers.s3_handler import read_from_s3, write_to_s3
+from constants import USE_S3
+
+if USE_S3:
+    from handlers.s3_handler import read_from_s3 as read, write_to_s3 as write
+else:
+    from handlers.local_handler import basic_read as read, basic_write as write
+
 from handlers.quinto_andar_handler import get_filtered_apartments
 from handlers.telegram_handler import send_all_messages
 
@@ -20,7 +26,7 @@ def dataframe_exclusion(df, df_to_exclude):
 
 
 def run():
-    previous_apartments_df = read_from_s3()
+    previous_apartments_df = read()
 
     current_apartments_df = get_filtered_apartments()
 
@@ -28,7 +34,7 @@ def run():
 
     aggregated_df = pd.concat([previous_apartments_df, new_apartments_df], sort=True)
     send_all_messages(new_apartments_df)
-    write_to_s3(aggregated_df)
+    write(aggregated_df)
 
 
 def main():
@@ -36,8 +42,8 @@ def main():
     while True:
         print('Started running at {}'.format(datetime.datetime.now()))
         run()
-        print('Time sleep of 5 minutes')
-        time.sleep(300)  # Delay for 1 minute (60 seconds).
+        print('Time sleep of 10 minutes')
+        time.sleep(600)  # Delay for 10 minutes (600 seconds).
 
 
 if __name__ == '__main__':
